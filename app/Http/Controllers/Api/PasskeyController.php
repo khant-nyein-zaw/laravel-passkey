@@ -7,7 +7,10 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialUserEntity;
+use Webauthn\AuthenticatorSelectionCriteria;
 use Webauthn\PublicKeyCredentialCreationOptions;
+use Webauthn\Denormalizer\WebauthnSerializerFactory;
+use Webauthn\AttestationStatement\AttestationStatementSupportManager;
 
 class PasskeyController extends Controller
 {
@@ -23,9 +26,15 @@ class PasskeyController extends Controller
                 id: $request->user()->id,
                 displayName: $request->user()->name
             ),
-            challenge: Str::random()
+            challenge: Str::random(),
+            authenticatorSelection: new AuthenticatorSelectionCriteria(
+                authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM,
+                userVerification: AuthenticatorSelectionCriteria::RESIDENT_KEY_REQUIREMENT_REQUIRED
+            )
         );
 
-        return $options;
+        return (new WebauthnSerializerFactory(
+            AttestationStatementSupportManager::create()
+        ))->create()->serialize(data: $options, format: 'json');
     }
 }
