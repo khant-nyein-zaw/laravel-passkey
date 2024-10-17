@@ -5,17 +5,18 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Session;
 use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialUserEntity;
 use Webauthn\AuthenticatorSelectionCriteria;
 use Webauthn\PublicKeyCredentialCreationOptions;
-use Webauthn\Denormalizer\WebauthnSerializerFactory;
-use Webauthn\AttestationStatement\AttestationStatementSupportManager;
 
 class PasskeyController extends Controller
 {
     public function registerOptions(Request $request)
     {
+        $request->validate(['name' => 'required|string|max:255']);
+
         $options = new PublicKeyCredentialCreationOptions(
             rp: new PublicKeyCredentialRpEntity(
                 name: config('app.name'),
@@ -28,13 +29,14 @@ class PasskeyController extends Controller
             ),
             challenge: Str::random(),
             authenticatorSelection: new AuthenticatorSelectionCriteria(
-                authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_CROSS_PLATFORM,
-                userVerification: AuthenticatorSelectionCriteria::RESIDENT_KEY_REQUIREMENT_REQUIRED
+                authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM,
+                userVerification: AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED,
+                residentKey: AuthenticatorSelectionCriteria::RESIDENT_KEY_REQUIREMENT_PREFERRED
             )
         );
 
-        return (new WebauthnSerializerFactory(
-            AttestationStatementSupportManager::create()
-        ))->create()->serialize(data: $options, format: 'json');
+        Session::flash('passkey-registration-options', $options);
+
+        return $options;
     }
 }
