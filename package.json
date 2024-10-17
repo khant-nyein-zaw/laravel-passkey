@@ -16,6 +16,6 @@
         "vite": "^5.0"
     },
     "dependencies": {
-        "@simplewebauthn/browser": "^11.0.0"
+        "@simplewebauthn/browser": "^10.0.0"
     }
 }
