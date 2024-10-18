@@ -2,7 +2,7 @@
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form x-data="authenticatePasskey" x-init="authenticate($el)" x-on:submit.prevent="authenticate($el)" method="POST"
+    <form x-data="authenticatePasskey" x-init="authenticate($el)" x-on:submit.prevent="authenticate($el, true)" method="POST"
         action="{{ route('login') }}">
         @csrf
 
@@ -16,14 +16,16 @@
         </div>
 
         <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <template x-if="showPasswordField">
+            <div class="mt-4">
+                <x-input-label for="password" :value="__('Password')" />
 
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
-                autocomplete="current-password" />
+                <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required
+                    autocomplete="current-password" />
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
+        </template>
 
         <!-- Remember Me -->
         <div class="block mt-4">

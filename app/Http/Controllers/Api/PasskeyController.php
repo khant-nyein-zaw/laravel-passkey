@@ -30,8 +30,7 @@ class PasskeyController extends Controller
             ),
             challenge: Str::random(),
             authenticatorSelection: new AuthenticatorSelectionCriteria(
-                authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM,
-                requireResidentKey: true
+                authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_NO_PREFERENCE
             )
         );
 
