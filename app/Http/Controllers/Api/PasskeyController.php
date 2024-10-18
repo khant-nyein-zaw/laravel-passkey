@@ -10,6 +10,7 @@ use Webauthn\PublicKeyCredentialRpEntity;
 use Webauthn\PublicKeyCredentialUserEntity;
 use Webauthn\AuthenticatorSelectionCriteria;
 use Webauthn\PublicKeyCredentialCreationOptions;
+use Webauthn\PublicKeyCredentialRequestOptions;
 
 class PasskeyController extends Controller
 {
@@ -30,12 +31,23 @@ class PasskeyController extends Controller
             challenge: Str::random(),
             authenticatorSelection: new AuthenticatorSelectionCriteria(
                 authenticatorAttachment: AuthenticatorSelectionCriteria::AUTHENTICATOR_ATTACHMENT_PLATFORM,
-                userVerification: AuthenticatorSelectionCriteria::USER_VERIFICATION_REQUIREMENT_PREFERRED,
-                residentKey: AuthenticatorSelectionCriteria::RESIDENT_KEY_REQUIREMENT_PREFERRED
+                requireResidentKey: true
             )
         );
 
         Session::flash('passkey-registration-options', $options);
+
+        return $options;
+    }
+
+    public function authenticateOptions()
+    {
+        $options = new PublicKeyCredentialRequestOptions(
+            challenge: Str::random(),
+            rpId: parse_url(config('app.url'), PHP_URL_HOST),
+        );
+
+        Session::flash('passkey-authentication-options', $options);
 
         return $options;
     }

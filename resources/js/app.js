@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
     startRegistration,
+    startAuthentication,
     browserSupportsWebAuthn,
 } from "@simplewebauthn/browser";
 import "./bootstrap";
@@ -15,8 +16,6 @@ document.addEventListener("alpine:init", () => {
         errors: null,
         browserSupportsWebAuthn,
         async register(form) {
-            console.log("name", this.name);
-
             this.errors = null;
 
             if (!this.browserSupportsWebAuthn()) {
@@ -46,6 +45,29 @@ document.addEventListener("alpine:init", () => {
 
             form.addEventListener("formdata", ({ formData }) => {
                 formData.set("passkey", JSON.stringify(attResp));
+            });
+
+            form.submit();
+        },
+    }));
+
+    Alpine.data("authenticatePasskey", () => ({
+        async authenticate(form) {
+            const options = await axios.get("api/passkeys/authenticate");
+            console.log(options.data);
+
+            let asseResp;
+            try {
+                asseResp = await startAuthentication(options.data);
+                console.log(asseResp);
+            } catch (error) {
+                console.log(error);
+                return;
+            }
+
+            form.action = "/passkeys/authenticate";
+            form.addEventListener("formdata", ({ formData }) => {
+                formData.set("answer", JSON.stringify(asseResp));
             });
 
             form.submit();

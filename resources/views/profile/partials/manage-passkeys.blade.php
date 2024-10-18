@@ -1,4 +1,4 @@
-<section>
+<section id="managePasskeys">
     <header>
         <h2 class="text-lg font-medium text-gray-900">
             {{ __('Manage Passkeys') }}
@@ -9,8 +9,8 @@
         </p>
     </header>
 
-    <form x-data="registerPasskey" x-on:submit.prevent="register($el)" name="createPasskey" method="post"
-        action="{{ route('passkey.store') }}" class="mt-6 space-y-6">
+    <form x-data="registerPasskey" x-show="browserSupportsWebAuthn()" x-on:submit.prevent="register($el)"
+        name="createPasskey" method="post" action="{{ route('passkey.store') }}" class="mt-6 space-y-6">
         @csrf
 
         <div>
