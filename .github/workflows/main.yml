@@ -53,5 +53,8 @@ jobs:
       - name: Run migrations
         run: php artisan migrate
 
+      - name: Run route lite
+        run: php artisan route:list
+
       - name: Run tests
         run: php artisan test
