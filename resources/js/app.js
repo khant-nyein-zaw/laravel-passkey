@@ -27,7 +27,7 @@ document.addEventListener("alpine:init", () => {
                 validateStatus: (status) => [200, 422].includes(status),
             });
 
-            if (options.status == 422) {
+            if (options.status === 422) {
                 this.errors = options.data.errors;
                 return;
             }
@@ -54,8 +54,6 @@ document.addEventListener("alpine:init", () => {
     Alpine.data("authenticatePasskey", () => ({
         showPasswordField: !browserSupportsWebAuthn(),
         async authenticate(form, manualSubmit = false) {
-            console.log(this.showPasswordField);
-
             if (this.showPasswordField) {
                 form.submit();
             }
