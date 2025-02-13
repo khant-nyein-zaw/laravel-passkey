@@ -50,10 +50,20 @@ jobs:
       - name: Generate application key
         run: php artisan key:generate
 
-      - name: Run migrations
-        run: php artisan migrate
+      - name: Wait for MySQL to be ready
+        run: sleep 15
 
-      - name: Run route lite
+      - name: Check MySQL Connection
+        run: |
+          until mysql -h127.0.0.1 -uroot -proot -e "SHOW DATABASES"; do
+            echo "Waiting for MySQL..."
+            sleep 3
+          done
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run route list
         run: php artisan route:list
 
       - name: Run optimize clear
